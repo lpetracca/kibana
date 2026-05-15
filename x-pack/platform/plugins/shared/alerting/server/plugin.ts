@@ -53,6 +53,7 @@ import type { PluginStart as DataPluginStart } from '@kbn/data-plugin/server';
 import type { MonitoringCollectionSetup } from '@kbn/monitoring-collection-plugin/server';
 import type { SharePluginStart } from '@kbn/share-plugin/server';
 import type { MaintenanceWindowsServerStart } from '@kbn/maintenance-windows-plugin/server';
+import { schema } from '@kbn/config-schema';
 import { ApiKeyType } from './task_runner/types';
 import { RuleTypeRegistry } from './rule_type_registry';
 import { TaskRunnerFactory } from './task_runner';
@@ -351,8 +352,7 @@ export class AlertingPlugin {
         this.logger.info(`Skipping initialization of AlertsService on migrator node`);
       } else {
         this.logger.info(
-          `using ${
-            this.dataStreamAdapter.isUsingDataStreams() ? 'datastreams' : 'indexes and aliases'
+          `using ${this.dataStreamAdapter.isUsingDataStreams() ? 'datastreams' : 'indexes and aliases'
           } for persisting alerts`
         );
         this.alertsService = new AlertsService({
@@ -368,6 +368,33 @@ export class AlertingPlugin {
         });
       }
     }
+
+    plugins.taskManager.registerTaskDefinitions({
+      'alerting:test-task': {
+        title: 'Random test',
+        timeout: '10s',
+        paramsSchema: schema.object({
+          message: schema.string(),
+        }),
+        stateSchemaByVersion: {
+          1: {
+            schema: schema.object({
+              count: schema.number(),
+            }),
+            up: (state: Record<string, unknown>) => ({ count: state.count || 0 }),
+          },
+        },
+        createTaskRunner: ({ taskInstance }) => ({
+          run: () => {
+            console.log('test task', {
+              asd: taskInstance.params,
+              taskInstance,
+            });
+            return Promise.resolve({ state: { count: taskInstance.state.count + 1 } });
+          },
+        }),
+      },
+    });
 
     const ruleTypeRegistry: RuleTypeRegistry = new RuleTypeRegistry({
       config: this.config,
@@ -644,6 +671,18 @@ export class AlertingPlugin {
       ],
     });
 
+    plugins.taskManager.ensureScheduled({
+      id: 'rsfksjdfghkjdf',
+      taskType: 'alerting:test-task',
+      params: {
+        message: 'Hello, world!',
+      },
+      state: {
+        count: 0,
+      },
+      schedule: { interval: '10s' },
+    });
+
     alertingAuthorizationClientFactory.initialize({
       ruleTypeRegistry: ruleTypeRegistry!,
       securityPluginStart: plugins.security,
@@ -799,8 +838,8 @@ export class AlertingPlugin {
 
           return objects
             ? Promise.all(
-                objects.map(async (objectItem) => await client.get({ id: objectItem.id }))
-              )
+              objects.map(async (objectItem) => await client.get({ id: objectItem.id }))
+            )
             : Promise.resolve([]);
         };
       }
@@ -810,16 +849,16 @@ export class AlertingPlugin {
       .then(() => {
         scheduleAlertingTelemetry(this.telemetryLogger, plugins.taskManager);
       })
-      .catch(() => {}); // it shouldn't reject, but just in case
+      .catch(() => { }); // it shouldn't reject, but just in case
 
-    scheduleAlertingHealthCheck(this.logger, this.config, plugins.taskManager).catch(() => {}); // it shouldn't reject, but just in case
+    scheduleAlertingHealthCheck(this.logger, this.config, plugins.taskManager).catch(() => { }); // it shouldn't reject, but just in case
     scheduleApiKeyInvalidatorTask(this.telemetryLogger, this.config, plugins.taskManager).catch(
-      () => {}
+      () => { }
     ); // it shouldn't reject, but just in case
 
     this.uiamApiKeyProvisioningTask
       ?.start({ core, taskManager: plugins.taskManager })
-      .catch(() => {});
+      .catch(() => { });
 
     return {
       listTypes: ruleTypeRegistry!.list.bind(this.ruleTypeRegistry!),
