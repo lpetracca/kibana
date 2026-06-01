@@ -14,13 +14,12 @@ import type {
 } from '@kbn/alerting-plugin/server';
 import type { StackAlertType } from '../types';
 
-
 export interface HelloWorldRuleParams extends RuleTypeParams {
   id: string;
   message: string;
 }
 
-export type HelloWorldExtractedRuleParams = HelloWorldRuleParams
+export type HelloWorldExtractedRuleParams = HelloWorldRuleParams;
 
 export interface HelloWorldRuleState extends RuleTypeState {
   success: boolean;

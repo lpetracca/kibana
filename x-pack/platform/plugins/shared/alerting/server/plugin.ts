@@ -352,7 +352,8 @@ export class AlertingPlugin {
         this.logger.info(`Skipping initialization of AlertsService on migrator node`);
       } else {
         this.logger.info(
-          `using ${this.dataStreamAdapter.isUsingDataStreams() ? 'datastreams' : 'indexes and aliases'
+          `using ${
+            this.dataStreamAdapter.isUsingDataStreams() ? 'datastreams' : 'indexes and aliases'
           } for persisting alerts`
         );
         this.alertsService = new AlertsService({
@@ -838,8 +839,8 @@ export class AlertingPlugin {
 
           return objects
             ? Promise.all(
-              objects.map(async (objectItem) => await client.get({ id: objectItem.id }))
-            )
+                objects.map(async (objectItem) => await client.get({ id: objectItem.id }))
+              )
             : Promise.resolve([]);
         };
       }
@@ -849,16 +850,16 @@ export class AlertingPlugin {
       .then(() => {
         scheduleAlertingTelemetry(this.telemetryLogger, plugins.taskManager);
       })
-      .catch(() => { }); // it shouldn't reject, but just in case
+      .catch(() => {}); // it shouldn't reject, but just in case
 
-    scheduleAlertingHealthCheck(this.logger, this.config, plugins.taskManager).catch(() => { }); // it shouldn't reject, but just in case
+    scheduleAlertingHealthCheck(this.logger, this.config, plugins.taskManager).catch(() => {}); // it shouldn't reject, but just in case
     scheduleApiKeyInvalidatorTask(this.telemetryLogger, this.config, plugins.taskManager).catch(
-      () => { }
+      () => {}
     ); // it shouldn't reject, but just in case
 
     this.uiamApiKeyProvisioningTask
       ?.start({ core, taskManager: plugins.taskManager })
-      .catch(() => { });
+      .catch(() => {});
 
     return {
       listTypes: ruleTypeRegistry!.list.bind(this.ruleTypeRegistry!),

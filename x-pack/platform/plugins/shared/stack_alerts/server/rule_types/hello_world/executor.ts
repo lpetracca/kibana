@@ -26,6 +26,7 @@ export async function executor({
   StackAlertType
 >): Promise<{ state: HelloWorldRuleState }> {
   console.log(`Configured hello world alert ${rule.id}`);
+  logger.info(`Configured hello world alert ${rule.id}`);
   return {
     state: {
       success: true,

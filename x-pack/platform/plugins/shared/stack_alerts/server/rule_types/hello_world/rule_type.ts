@@ -6,31 +6,18 @@
  */
 
 import { i18n } from '@kbn/i18n';
-import type { SavedObjectReference } from '@kbn/core/server';
 import { DEFAULT_APP_CATEGORIES } from '@kbn/core/server';
 import { STACK_ALERTS_FEATURE_ID } from '@kbn/rule-data-utils';
-import { randomUUID } from 'node:crypto';
 import { schema } from '@kbn/config-schema';
-import type {
-  HelloWorldExtractedRuleParams,
-  HelloWorldRuleParams,
-  HelloWorldRuleType,
-} from './types';
+import type { HelloWorldRuleType } from './types';
 import { STACK_ALERTS_AAD_CONFIG } from '../constants';
 import { executor } from './executor';
 
-export function extractEntityAndBoundaryReferences(params: HelloWorldRuleParams): {
-  params: HelloWorldExtractedRuleParams;
-  references: SavedObjectReference[];
-} {
-  return {
-    params,
-    references: [],
-  };
-}
+export const HELLO_WORLD_ID = '.hello-world';
+export const ACTION_GROUP_ID = 'threshold met';
 
 export function getRuleType(): HelloWorldRuleType {
-  const alertTypeName = i18n.translate('xpack.stackAlerts.helloWorld.alertTypeTitle', {
+  const ruleTypeName = i18n.translate('xpack.stackAlerts.helloWorld.alertTypeTitle', {
     defaultMessage: 'Hello World alert',
   });
 
@@ -42,8 +29,8 @@ export function getRuleType(): HelloWorldRuleType {
   );
 
   return {
-    id: randomUUID(),
-    name: alertTypeName,
+    id: HELLO_WORLD_ID,
+    name: ruleTypeName,
     actionGroups: [{ id: 'test action group id', name: actionGroupName }],
     recoveryActionGroup: {
       id: 'test recovery id',
@@ -52,7 +39,7 @@ export function getRuleType(): HelloWorldRuleType {
       }),
     },
     doesSetRecoveryContext: true,
-    defaultActionGroupId: 'test action group id',
+    defaultActionGroupId: ACTION_GROUP_ID,
     executor,
     category: DEFAULT_APP_CATEGORIES.management.id,
     producer: STACK_ALERTS_FEATURE_ID,
@@ -63,7 +50,7 @@ export function getRuleType(): HelloWorldRuleType {
         message: schema.string(),
       }),
     },
-    minimumLicenseRequired: 'gold',
+    minimumLicenseRequired: 'basic',
     isExportable: true,
     alerts: STACK_ALERTS_AAD_CONFIG,
   };
