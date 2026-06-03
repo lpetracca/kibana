@@ -387,10 +387,7 @@ export class AlertingPlugin {
         },
         createTaskRunner: ({ taskInstance }) => ({
           run: () => {
-            console.log('test task', {
-              asd: taskInstance.params,
-              taskInstance,
-            });
+            console.log('test task running');
             return Promise.resolve({ state: { count: taskInstance.state.count + 1 } });
           },
         }),

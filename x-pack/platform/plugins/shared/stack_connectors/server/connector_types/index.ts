@@ -34,6 +34,7 @@ import { getConnectorType as getTeamsConnectorType } from './teams';
 import { getConnectorType as getD3SecurityConnectorType } from './d3security';
 import { getConnectorType as getTheHiveConnectorType } from './thehive';
 import { getConnectorType as getXSOARConnectorType } from './xsoar';
+import { getConnectorType as getHelloWorldConnectorType } from './hello_world';
 import {
   getConnectorType as getHttpConnectorType,
   getSystemConnectorType as getHttpSystemConnectorType,
@@ -73,6 +74,7 @@ export function registerConnectorTypes({
   actions.registerType(getJiraConnectorType());
   actions.registerType(getTeamsConnectorType());
   actions.registerType(getTorqConnectorType());
+  actions.registerType(getHelloWorldConnectorType());
 
   actions.registerSubActionConnectorType(getOpsgenieConnectorType());
   actions.registerSubActionConnectorType(getJiraServiceManagementConnectorType());

@@ -13,7 +13,6 @@ import type { PluginStartContract as ActionsPluginStartContract } from '@kbn/act
 import type { EncryptedSavedObjectsPluginStart } from '@kbn/encrypted-saved-objects-plugin/server';
 
 import type { SpacesPluginSetup } from '@kbn/spaces-plugin/server';
-import { z } from '@kbn/zod';
 import { registerInferenceConnectorsUsageCollector } from './usage/inference/inference_connectors_usage_collector';
 import { registerConnectorTypes } from './connector_types';
 import { getWellKnownEmailServiceRoute, getWebhookSecretHeadersKeyRoute } from './routes';
@@ -57,24 +56,6 @@ export class StackConnectorsPlugin
       actions,
       publicBaseUrl: core.http.basePath.publicBaseUrl,
       experimentalFeatures: this.experimentalFeatures,
-    });
-
-    actions.registerType({
-      id: '.custom-connector',
-      minimumLicenseRequired: 'gold',
-      name: 'Custom connector',
-      supportedFeatureIds: ['alerting'],
-      validate: {
-        config: { schema: z.object({}).strict() },
-        secrets: { schema: z.object({}).strict() },
-        params: {
-          schema: z.object({}).strict(),
-        },
-      },
-      executor: async (execOptions) => {
-        console.log(execOptions);
-        return { status: 'ok', actionId: execOptions.actionId };
-      },
     });
 
     if (this.experimentalFeatures.connectorsFromSpecs) {

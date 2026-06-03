@@ -8,7 +8,6 @@
 import type { CoreSetup, Plugin, PluginInitializerContext } from '@kbn/core/public';
 import type { TriggersAndActionsUIPublicPluginSetup } from '@kbn/triggers-actions-ui-plugin/public';
 import type { ActionsPublicPluginSetup } from '@kbn/actions-plugin/public';
-import { lazy } from 'react';
 import type { ConfigSchema as StackConnectorsConfigType } from '../server/config';
 import { registerConnectorTypes } from './connector_types';
 import { ExperimentalFeaturesService } from './common/experimental_features_service';
@@ -44,23 +43,6 @@ export class StackConnectorsPublicPlugin
       services: {
         validateEmailAddresses: actions.validateEmailAddresses,
       },
-    });
-
-    triggersActionsUi.actionTypeRegistry.register({
-      id: '.custom-connector',
-      iconClass: 'logsApp',
-      selectMessage: 'random message',
-      actionTypeTitle: 'Custom connector title',
-      validateParams: (actionParams) => {
-        const errors = {
-          message: new Array<string>(),
-        };
-        const validationResult = { errors };
-
-        return Promise.resolve(validationResult);
-      },
-      actionConnectorFields: null,
-      actionParamsFields: lazy(() => import('./connector_types/server_log/server_log_params')),
     });
 
     if (ExperimentalFeaturesService.get().connectorsFromSpecs) {
