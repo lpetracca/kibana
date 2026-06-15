@@ -9,6 +9,20 @@ import type { EuiIconProps } from '@elastic/eui';
 import type { WebhookMethods } from '@kbn/connector-schemas/common/auth/constants';
 import type { UserConfiguredActionConnector } from '@kbn/triggers-actions-ui-plugin/public/types';
 
+export enum HelloWorldOptions {
+  TRACE = 'trace',
+  DEBUG = 'debug',
+  INFO = 'info',
+  WARN = 'warn',
+  ERROR = 'error',
+  FATAL = 'fatal',
+}
+
+export interface HelloWorldActionParams {
+  level?: HelloWorldOptions;
+  message: string;
+}
+
 export interface EmailActionParams {
   to: string[];
   cc: string[];

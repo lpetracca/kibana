@@ -10,6 +10,7 @@ import type { PluginSetupContract as AlertingSetup } from '@kbn/alerting-plugin/
 import { getRuleType as getGeoContainmentRuleType } from './geo_containment';
 import { getRuleType as getThresholdRuleType } from './threshold';
 import { getRuleType as getEsQueryRuleType } from './es_query';
+import { getRuleType as getHelloWorldRuleType } from './hello_world';
 
 export function registerRuleTypes(
   {
@@ -26,4 +27,5 @@ export function registerRuleTypes(
   }
   ruleTypeRegistry.register(getThresholdRuleType());
   ruleTypeRegistry.register(getEsQueryRuleType(alerting));
+  ruleTypeRegistry.register(getHelloWorldRuleType());
 }
