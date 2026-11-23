@@ -62,7 +62,19 @@ export const createConnectorRoute = (
     router.handleLegacyErrors(
       verifyAccessAndContext(licenseState, async function (context, req, res) {
         try {
-          const actionsClient = (await context.actions).getActionsClient();
+          const actions = await context.actions;
+          const actionsClient = actions.getActionsClient();
+          try {
+            getCreateConnectorRequestBodySchemaV1(
+              actionsConfigUtils.isInboundEventsEnabled(),
+              actions.isCatalogFeatureFlagEnabled()
+            ).validate(req.body, {}, 'request body');
+          } catch (error) {
+            return res.badRequest({
+              body: error.message,
+            });
+          }
+
           const action = transformCreateConnectorBodyV1(req.body);
           const resp = await actionsClient.create({
             action,
